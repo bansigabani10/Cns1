@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<title>
+    ALA1
+</title>
+<body>
+    <h1> Code for RSA</h1>
+    <h5 style="background-color: rgb(139, 158, 162); font-family: 'Times New Roman', Times, serif;">
+        # Digital Signature System using RSA and SHA-256<br>
+
+from cryptography.hazmat.primitives import hashes<br>
+from cryptography.hazmat.primitives.asymmetric import rsa, padding<br>
+from cryptography.hazmat.primitives import serialization<br>
+from cryptography.hazmat.backends import default_backend<br>
+from cryptography.exceptions import InvalidSignature<br>
+
+# -----------------------------<br>
+# 1. Generate RSA Key Pair<br>
+# -----------------------------<br>
+print("Generating RSA Key Pair...")<br>
+
+private_key = rsa.generate_private_key(<br>
+    public_exponent=65537,<br>
+    key_size=2048,<br>
+    backend=default_backend()<br>
+)<br>
+
+public_key = private_key.public_key()<br>
+
+print("Key Pair Generated Successfully!\n")<br>
+
+# -----------------------------<br>
+# 2. Take Message Input<br>
+# -----------------------------<br>
+message = input("Enter message to sign: ")<br>
+message_bytes = message.encode()<br>
+
+# -----------------------------<br>
+# 3. Sign the Message (Private Key)<br>
+# -----------------------------<br>
+print("\nSigning the message...")<br>
+
+signature = private_key.sign(<br>
+    message_bytes,<br>
+    padding.PSS(<br>
+        mgf=padding.MGF1(hashes.SHA256()),<br>
+        salt_length=padding.PSS.MAX_LENGTH<br>
+    ),<br>
+    hashes.SHA256()<br>
+)<br>
+
+print("Message Signed Successfully!")<br>
+print("Digital Signature (in bytes):", signature)<br>
+
+# -----------------------------<br>
+# 4. Verify the Signature (Public Key)<br>
+# -----------------------------<br>
+print("\nVerifying the signature...")<br>
+<br>
+try:<br>
+    public_key.verify(<br>
+        signature,<br>
+        message_bytes,<br>
+        padding.PSS(<br>
+            mgf=padding.MGF1(hashes.SHA256()),<br>
+            salt_length=padding.PSS.MAX_LENGTH<br>
+        ),<br>
+        hashes.SHA256()<br>
+    )<br>
+    print("✅ Signature is VALID. Message integrity verified!")<br>
+<br>
+except InvalidSignature:<br>
+    print("❌ Signature is INVALID. Message may be tampered!")<br>
+    </h5>
+    <h1>
+        Output
+    </h1>
+    <img src="img1.png" alt="A descriptive description of the image">
+</body>
+</html>
